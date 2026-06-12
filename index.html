@@ -1,0 +1,719 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Project Rewire — Transform. Engineered.</title>
+  <meta name="description" content="A personal fitness transformation program for serious people with demanding lives.">
+  <meta property="og:title" content="Project Rewire — Transform. Engineered.">
+  <meta property="og:description" content="A personal fitness transformation program for serious people with demanding lives.">
+  <meta property="og:type" content="website">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+
+  <style>
+    /* ─── Design tokens ─────────────────────────────────────── */
+    :root {
+      --bg:      #0A0A0A;
+      --surface: #111111;
+      --border:  #1E1E1E;
+      --accent:  #C8F135;
+      --text:    #F5F5F5;
+      --muted:   #888888;
+      --dim:     #444444;
+    }
+
+    /* ─── Reset ─────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-weight: 300;
+      line-height: 1.7;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    h1, h2, h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
+    }
+    a { color: inherit; }
+
+    /* ─── Utility ────────────────────────────────────────────── */
+    .inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* ─── Fade-up animation ───────────────────────────────────── */
+    .fu {
+      opacity: 0;
+      transform: translateY(22px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+    .fu.vis { opacity: 1; transform: none; }
+    .fu.d1 { transition-delay: 0.08s; }
+    .fu.d2 { transition-delay: 0.16s; }
+    .fu.d3 { transition-delay: 0.24s; }
+
+    /* ─── Navigation ─────────────────────────────────────────── */
+    nav {
+      position: fixed;
+      inset: 0 0 auto;
+      z-index: 100;
+      padding: 20px 5%;
+      display: flex;
+      align-items: center;
+      transition: background 0.3s, border-color 0.3s;
+      border-bottom: 1px solid transparent;
+    }
+    nav.scrolled {
+      background: rgba(10,10,10,0.93);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom-color: var(--border);
+    }
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      text-decoration: none;
+    }
+    .logo-mark { display: block; flex-shrink: 0; }
+    .logo-wordmark {
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      color: var(--text);
+    }
+
+    /* ─── Hero ───────────────────────────────────────────────── */
+    #hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      padding: 130px 5% 90px;
+      overflow: hidden;
+    }
+
+    /* Drifting grid */
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: -80px;
+      background-image:
+        linear-gradient(rgba(200,241,53,0.045) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(200,241,53,0.045) 1px, transparent 1px);
+      background-size: 68px 68px;
+      animation: gridDrift 32s linear infinite;
+      pointer-events: none;
+    }
+    /* Radial vignette */
+    #hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 72% 65% at 48% 52%, transparent 30%, var(--bg) 88%);
+      pointer-events: none;
+    }
+    @keyframes gridDrift {
+      0%   { transform: translate(0, 0); }
+      100% { transform: translate(68px, 68px); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 1;
+      max-width: 980px;
+    }
+    .hero-eyebrow {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 30px;
+    }
+    .hero-eyebrow::before {
+      content: '';
+      display: block;
+      width: 26px;
+      height: 1px;
+      background: var(--accent);
+      flex-shrink: 0;
+    }
+    .hero-headline {
+      font-size: clamp(34px, 7vw, 92px);
+      color: var(--text);
+      margin-bottom: 22px;
+      max-width: 15ch;
+    }
+    .hero-sub {
+      font-size: clamp(17px, 2.1vw, 23px);
+      color: var(--muted);
+      max-width: 500px;
+      line-height: 1.65;
+      font-weight: 300;
+      margin-bottom: 50px;
+    }
+    .cta {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      padding: 16px 34px;
+      background: var(--accent);
+      color: #0A0A0A;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      text-decoration: none;
+      transition: background 0.18s, transform 0.18s;
+    }
+    .cta:hover {
+      background: #d9ff4a;
+      transform: translateY(-2px);
+    }
+    .cta svg { transition: transform 0.18s; }
+    .cta:hover svg { transform: translateX(4px); }
+
+    /* ─── Problem ─────────────────────────────────────────────── */
+    #problem {
+      padding: 120px 5%;
+      text-align: center;
+    }
+    .problem-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: clamp(20px, 3.1vw, 40px);
+      font-weight: 400;
+      letter-spacing: -0.02em;
+      line-height: 1.35;
+      max-width: 820px;
+      margin: 0 auto 80px;
+      color: var(--text);
+    }
+    .problem-text mark {
+      background: none;
+      color: var(--accent);
+    }
+    .pain-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      max-width: 920px;
+      margin: 0 auto;
+      border: 1px solid var(--border);
+    }
+    .pain-item {
+      padding: 32px 28px;
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.65;
+      text-align: left;
+      border-right: 1px solid var(--border);
+    }
+    .pain-item:last-child { border-right: none; }
+
+    /* ─── Approach ────────────────────────────────────────────── */
+    #approach {
+      padding: 120px 5%;
+      background: var(--surface);
+    }
+    .section-eyebrow {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.25em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 14px;
+    }
+    .section-heading {
+      font-size: clamp(28px, 4vw, 50px);
+      color: var(--text);
+      margin-bottom: 56px;
+    }
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px;
+    }
+    .card {
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-top: 2px solid var(--accent);
+      padding: 36px 28px;
+      transition: border-color 0.25s;
+    }
+    .card:hover {
+      border-color: rgba(200,241,53,0.28);
+      border-top-color: var(--accent);
+    }
+    .card-title {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 18px;
+      font-weight: 600;
+      letter-spacing: -0.01em;
+      color: var(--text);
+      margin-bottom: 12px;
+    }
+    .card-body {
+      font-size: 15px;
+      color: var(--muted);
+      line-height: 1.7;
+    }
+
+    /* ─── For you ─────────────────────────────────────────────── */
+    #for-you { padding: 120px 5%; }
+    .check-list {
+      list-style: none;
+      margin: 40px 0;
+      max-width: 680px;
+    }
+    .check-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 18px;
+      padding: 20px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 16px;
+      color: var(--text);
+      font-weight: 300;
+      line-height: 1.5;
+    }
+    .check-list li:first-child { border-top: 1px solid var(--border); }
+    .chk {
+      color: var(--accent);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.05em;
+      flex-shrink: 0;
+      padding-top: 3px;
+    }
+    .not-for {
+      font-size: 13px;
+      color: var(--dim);
+      letter-spacing: 0.04em;
+    }
+
+    /* ─── About ───────────────────────────────────────────────── */
+    #about {
+      padding: 120px 5%;
+      background: var(--surface);
+    }
+    .about-body {
+      max-width: 600px;
+      margin-top: 24px;
+    }
+    .about-body p {
+      font-size: 17px;
+      color: var(--muted);
+      line-height: 1.9;
+    }
+
+    /* ─── Apply ───────────────────────────────────────────────── */
+    #apply { padding: 120px 5%; }
+    .apply-intro {
+      max-width: 580px;
+      margin-bottom: 60px;
+    }
+    .apply-intro .section-heading { margin-bottom: 14px; }
+    .apply-intro p {
+      font-size: 16px;
+      color: var(--muted);
+      line-height: 1.65;
+    }
+    .app-form { max-width: 580px; }
+    .field { margin-bottom: 24px; }
+    .field label {
+      display: block;
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 11px;
+      font-weight: 600;
+      letter-spacing: 0.2em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+    .field input,
+    .field textarea,
+    .field select {
+      display: block;
+      width: 100%;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      padding: 14px 16px;
+      outline: none;
+      border-radius: 0;
+      -webkit-appearance: none;
+      appearance: none;
+      transition: border-color 0.2s;
+      line-height: 1.5;
+    }
+    .field textarea {
+      resize: vertical;
+      min-height: 108px;
+    }
+    .field select {
+      cursor: pointer;
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='7'%3E%3Cpath d='M1 1l5 5 5-5' stroke='%23666' stroke-width='1.5' fill='none' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 15px center;
+      padding-right: 40px;
+    }
+    .field input:focus,
+    .field textarea:focus,
+    .field select:focus { border-color: var(--accent); }
+    .field input::placeholder,
+    .field textarea::placeholder { color: var(--dim); }
+    .field select option { background: var(--surface); color: var(--text); }
+
+    .submit-btn {
+      width: 100%;
+      padding: 18px;
+      background: var(--accent);
+      color: #0A0A0A;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      margin-top: 8px;
+      transition: background 0.18s, transform 0.15s;
+    }
+    .submit-btn:hover:not(:disabled) {
+      background: #d9ff4a;
+      transform: translateY(-1px);
+    }
+    .submit-btn:disabled { opacity: 0.45; cursor: not-allowed; transform: none; }
+    .form-note {
+      margin-top: 16px;
+      font-size: 13px;
+      color: var(--dim);
+      text-align: center;
+    }
+    .success-msg {
+      display: none;
+      padding: 40px 32px;
+      border: 1px solid rgba(200,241,53,0.25);
+      background: rgba(200,241,53,0.03);
+      text-align: center;
+      max-width: 580px;
+    }
+    .success-msg p {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 20px;
+      font-weight: 500;
+      color: var(--accent);
+      letter-spacing: -0.01em;
+    }
+
+    /* ─── Footer ─────────────────────────────────────────────── */
+    footer {
+      padding: 26px 5%;
+      border-top: 1px solid var(--accent);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: var(--bg);
+    }
+    footer p { font-size: 13px; color: var(--muted); }
+
+    /* ─── Responsive ─────────────────────────────────────────── */
+    @media (max-width: 860px) {
+      .cards { grid-template-columns: 1fr; gap: 12px; }
+      .pain-grid { grid-template-columns: 1fr; }
+      .pain-item { border-right: none; border-bottom: 1px solid var(--border); }
+      .pain-item:last-child { border-bottom: none; }
+    }
+    @media (max-width: 520px) {
+      nav { padding: 16px 5%; }
+      #hero { padding: 110px 5% 70px; }
+      footer { flex-direction: column; gap: 8px; text-align: center; }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ═══════════════════════════════════════
+       NAV
+  ═══════════════════════════════════════ -->
+  <nav id="mainNav">
+    <a href="#hero" class="logo" aria-label="Project Rewire home">
+      <!-- Logo mark: R with lightning bolt leg -->
+      <svg class="logo-mark" width="30" height="38" viewBox="0 0 38 52" fill="none"
+           xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <!-- Vertical stroke -->
+        <path d="M5 5 L5 47" stroke="#C8F135" stroke-width="7.5" stroke-linecap="round"/>
+        <!-- Bowl -->
+        <path d="M5 5 L18 5 Q33 5 33 15 Q33 25 18 25 L5 25"
+              stroke="#C8F135" stroke-width="7" fill="none"
+              stroke-linecap="round" stroke-linejoin="round"/>
+        <!-- Lightning bolt leg -->
+        <polyline points="5,25 20,25 14,37 27,37 21,49"
+                  stroke="#C8F135" stroke-width="6.5" fill="none"
+                  stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+      <span class="logo-wordmark">Project Rewire</span>
+    </a>
+  </nav>
+
+
+  <!-- ═══════════════════════════════════════
+       HERO
+  ═══════════════════════════════════════ -->
+  <section id="hero">
+    <div class="hero-content">
+      <p class="hero-eyebrow">Project Rewire &mdash; Transform. Engineered.</p>
+      <h1 class="hero-headline">You don't need another workout plan.</h1>
+      <p class="hero-sub">You need to rewire how you think about your body.</p>
+      <a href="#apply" class="cta">
+        Apply Now
+        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
+          <path d="M2 7h10M8 3l4 4-4 4"
+                stroke="#0A0A0A" stroke-width="1.6"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </a>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       PROBLEM
+  ═══════════════════════════════════════ -->
+  <section id="problem">
+    <div class="inner">
+      <p class="problem-text fu">
+        Most people fail not because they're lazy. They fail because they're following
+        <mark>advice built for someone else's life.</mark>
+      </p>
+      <div class="pain-grid">
+        <div class="pain-item fu">Generic plans that ignore your schedule</div>
+        <div class="pain-item fu d1">Advice from people who've never had a desk job</div>
+        <div class="pain-item fu d2">Progress that disappears the moment life gets busy</div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       APPROACH
+  ═══════════════════════════════════════ -->
+  <section id="approach">
+    <div class="inner">
+      <p class="section-eyebrow">The method</p>
+      <h2 class="section-heading fu">How this works differently</h2>
+      <div class="cards">
+        <div class="card fu">
+          <div class="card-title">Built around your life</div>
+          <p class="card-body">Not your gym's schedule. Your calendar, your constraints, your starting point.</p>
+        </div>
+        <div class="card fu d1">
+          <div class="card-title">No fluff. No filler.</div>
+          <p class="card-body">Every decision is intentional. What you eat, how you train, how you recover — all connected.</p>
+        </div>
+        <div class="card fu d2">
+          <div class="card-title">Engineer's mindset</div>
+          <p class="card-body">Systems over motivation. Data over guesswork. Habits over willpower.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       WHO IT'S FOR
+  ═══════════════════════════════════════ -->
+  <section id="for-you">
+    <div class="inner">
+      <h2 class="section-heading fu">This is for you if&hellip;</h2>
+      <ul class="check-list" role="list">
+        <li class="fu"><span class="chk">✓</span>You have a demanding job and can't spend 2 hours in the gym</li>
+        <li class="fu d1"><span class="chk">✓</span>You've tried before but life kept getting in the way</li>
+        <li class="fu d1"><span class="chk">✓</span>You're done with generic YouTube advice</li>
+        <li class="fu d2"><span class="chk">✓</span>You're willing to be consistent if someone shows you exactly what to do</li>
+        <li class="fu d2"><span class="chk">✓</span>You're serious about change — not just motivated for a week</li>
+      </ul>
+      <p class="not-for fu">This is NOT for people looking for shortcuts.</p>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       ABOUT
+  ═══════════════════════════════════════ -->
+  <section id="about">
+    <div class="inner">
+      <h2 class="section-heading fu">Who is behind this</h2>
+      <div class="about-body">
+        <p class="fu">
+          I'm Gaurav — a software engineer who spent years figuring out how to build a body I'm proud of
+          without letting it consume my life. I'm not a certified trainer. I don't run a gym.
+          I'm someone who solved this problem for myself and now helps a small number of serious people
+          do the same.
+        </p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       APPLICATION FORM
+  ═══════════════════════════════════════ -->
+  <section id="apply">
+    <div class="inner">
+      <div class="apply-intro fu">
+        <h2 class="section-heading">Apply to work with me</h2>
+        <p>I review every application personally. If I think I can help, I'll reach out within 48 hours.</p>
+      </div>
+
+      <form class="app-form" id="appForm"
+            action="https://formspree.io/f/REPLACE_WITH_YOUR_ID"
+            method="POST">
+
+        <div class="field">
+          <label for="name">Full Name</label>
+          <input type="text" id="name" name="name"
+                 required autocomplete="name"
+                 placeholder="Your full name">
+        </div>
+
+        <div class="field">
+          <label for="email">Email</label>
+          <input type="email" id="email" name="email"
+                 required autocomplete="email"
+                 placeholder="you@example.com">
+        </div>
+
+        <div class="field">
+          <label for="situation">Current Situation</label>
+          <textarea id="situation" name="situation" required
+            placeholder="Describe where you are right now: weight, lifestyle, activity level"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="goal">Your Goal</label>
+          <textarea id="goal" name="goal" required
+            placeholder="What do you want to achieve and in what timeframe?"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="tried">What Have You Tried Before?</label>
+          <textarea id="tried" name="tried" required
+            placeholder="Previous programs, approaches, how long you stuck with them..."></textarea>
+        </div>
+
+        <div class="field">
+          <label for="commitment">Commitment Level</label>
+          <textarea id="commitment" name="commitment" required
+            placeholder="On a scale of 1–10, how serious are you — and why not a 10?"></textarea>
+        </div>
+
+        <div class="field">
+          <label for="investment">Financial Investment</label>
+          <select id="investment" name="investment" required>
+            <option value="" disabled selected>Are you okay investing financially in this process?</option>
+            <option value="Yes, definitely">Yes, definitely</option>
+            <option value="I need to know more first">I need to know more first</option>
+            <option value="Not right now">Not right now</option>
+          </select>
+        </div>
+
+        <button type="submit" class="submit-btn" id="submitBtn">Submit Application</button>
+        <p class="form-note">No spam. No sales calls. Just a personal reply if it's a good fit.</p>
+
+      </form>
+
+      <div class="success-msg" id="successMsg" role="alert">
+        <p>Got it. I'll be in touch if it's a good fit.</p>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ═══════════════════════════════════════ -->
+  <footer>
+    <p>© 2025 Project Rewire</p>
+    <p>Built by a builder.</p>
+  </footer>
+
+
+  <script>
+    // Nav: add solid background on scroll
+    const nav = document.getElementById('mainNav');
+    window.addEventListener('scroll', () => {
+      nav.classList.toggle('scrolled', window.scrollY > 48);
+    }, { passive: true });
+
+    // Fade-up on scroll into view
+    const observer = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          e.target.classList.add('vis');
+          observer.unobserve(e.target);
+        }
+      });
+    }, { threshold: 0.1, rootMargin: '0px 0px -36px 0px' });
+    document.querySelectorAll('.fu').forEach(el => observer.observe(el));
+
+    // Form: async submit → inline success
+    const form       = document.getElementById('appForm');
+    const submitBtn  = document.getElementById('submitBtn');
+    const successMsg = document.getElementById('successMsg');
+
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      submitBtn.disabled    = true;
+      submitBtn.textContent = 'Submitting…';
+
+      try {
+        const res = await fetch(form.action, {
+          method:  'POST',
+          body:    new FormData(form),
+          headers: { Accept: 'application/json' }
+        });
+
+        if (res.ok) {
+          form.style.display       = 'none';
+          successMsg.style.display = 'block';
+          successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } else {
+          const data = await res.json().catch(() => ({}));
+          const msg  = data.errors?.map(err => err.message).join(', ')
+                       || 'Something went wrong. Please try again.';
+          alert(msg);
+          submitBtn.disabled    = false;
+          submitBtn.textContent = 'Submit Application';
+        }
+      } catch {
+        alert('Network error — please check your connection and try again.');
+        submitBtn.disabled    = false;
+        submitBtn.textContent = 'Submit Application';
+      }
+    });
+  </script>
+
+</body>
+</html>
