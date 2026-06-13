@@ -842,6 +842,7 @@
       try {
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
           email:    email,
+          to_email: email,
           passcode: currentOtp,
           time:     expTime,
         });
