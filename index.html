@@ -11,6 +11,7 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
   <style>
     /* ─── Design tokens ─────────────────────────────────────── */
@@ -412,6 +413,88 @@
       color: var(--dim);
       text-align: center;
     }
+    /* ── OTP verification step ─────────────────────────────── */
+    .otp-step {
+      max-width: 580px;
+      margin-bottom: 40px;
+      padding: 32px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+    }
+    .otp-step h3 {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 16px;
+      font-weight: 600;
+      margin-bottom: 8px;
+      color: var(--text);
+    }
+    .otp-step .otp-desc {
+      font-size: 14px;
+      color: var(--muted);
+      margin-bottom: 24px;
+    }
+    .otp-row {
+      display: flex;
+      gap: 10px;
+    }
+    .otp-row input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      font-size: 15px;
+      font-weight: 300;
+      padding: 14px 16px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .otp-row input:focus { border-color: var(--accent); }
+    .otp-row input::placeholder { color: var(--dim); }
+    .otp-action-btn {
+      padding: 14px 22px;
+      background: var(--accent);
+      color: #0A0A0A;
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 700;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      border: none;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background 0.18s;
+    }
+    .otp-action-btn:hover:not(:disabled) { background: #d9ff4a; }
+    .otp-action-btn:disabled { opacity: 0.45; cursor: not-allowed; }
+    .otp-hint {
+      margin-top: 10px;
+      font-size: 13px;
+      color: var(--muted);
+    }
+    .otp-hint.error { color: #ff6b6b; }
+    .otp-hint.success { color: var(--accent); }
+    .otp-verified-badge {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 14px;
+      color: var(--accent);
+      font-family: 'Space Grotesk', sans-serif;
+      font-weight: 600;
+      margin-bottom: 32px;
+    }
+    .resend-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      cursor: pointer;
+      font-size: 13px;
+      font-family: 'Inter', sans-serif;
+      text-decoration: underline;
+      padding: 0;
+    }
+
     .success-msg {
       display: none;
       padding: 40px 32px;
@@ -588,7 +671,35 @@
         <p>I review every application personally. If I think I can help, I'll reach out within 48 hours.</p>
       </div>
 
-      <form class="app-form" id="appForm"
+      <!-- OTP verification -->
+      <div class="otp-step" id="otpStep">
+        <h3>Verify your email first</h3>
+        <p class="otp-desc">Enter your email address and we'll send you a 6-digit code to verify your identity before you can apply.</p>
+
+        <div id="otpEmailBlock">
+          <div class="otp-row">
+            <input type="email" id="otpEmail" placeholder="you@example.com" autocomplete="email">
+            <button type="button" class="otp-action-btn" id="sendOtpBtn">Send Code</button>
+          </div>
+          <p class="otp-hint" id="otpEmailHint"></p>
+        </div>
+
+        <div id="otpCodeBlock" style="display:none; margin-top:20px;">
+          <div class="otp-row">
+            <input type="text" id="otpCode" placeholder="Enter 6-digit code" maxlength="6" inputmode="numeric">
+            <button type="button" class="otp-action-btn" id="verifyOtpBtn">Verify</button>
+          </div>
+          <p class="otp-hint" id="otpCodeHint"></p>
+          <p class="otp-hint" style="margin-top:8px;">Didn't receive it? <button type="button" class="resend-btn" id="resendOtpBtn">Resend code</button></p>
+        </div>
+      </div>
+
+      <div class="otp-verified-badge" id="otpVerifiedBadge" style="display:none;">
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><circle cx="8" cy="8" r="8" fill="#C8F135"/><path d="M4.5 8l2.5 2.5 4.5-5" stroke="#0A0A0A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        Email verified
+      </div>
+
+      <form class="app-form" id="appForm" style="display:none;"
             action="https://formspree.io/f/mojzpkwo"
             method="POST">
 
@@ -662,24 +773,118 @@
 
 
   <script>
-    // Nav: add solid background on scroll
+    // ── EmailJS credentials ──────────────────────────────────
+    const EMAILJS_PUBLIC_KEY  = 'xv7GvKeQCq6cgp4if';
+    const EMAILJS_SERVICE_ID  = 'service_up20ls8';
+    const EMAILJS_TEMPLATE_ID = 'template_mnoyqad';
+
+    emailjs.init({ publicKey: EMAILJS_PUBLIC_KEY });
+
+    // ── Nav scroll ───────────────────────────────────────────
     const nav = document.getElementById('mainNav');
     window.addEventListener('scroll', () => {
       nav.classList.toggle('scrolled', window.scrollY > 48);
     }, { passive: true });
 
-    // Fade-up on scroll into view
+    // ── Fade-up observer ─────────────────────────────────────
     const observer = new IntersectionObserver((entries) => {
       entries.forEach(e => {
-        if (e.isIntersecting) {
-          e.target.classList.add('vis');
-          observer.unobserve(e.target);
-        }
+        if (e.isIntersecting) { e.target.classList.add('vis'); observer.unobserve(e.target); }
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -36px 0px' });
     document.querySelectorAll('.fu').forEach(el => observer.observe(el));
 
-    // Form: async submit → inline success
+    // ── OTP logic ────────────────────────────────────────────
+    let currentOtp = null;
+    let otpExpiry  = null;
+    const OTP_TTL  = 10 * 60 * 1000; // 10 minutes
+
+    const otpStep         = document.getElementById('otpStep');
+    const otpEmailBlock   = document.getElementById('otpEmailBlock');
+    const otpCodeBlock    = document.getElementById('otpCodeBlock');
+    const otpEmailInput   = document.getElementById('otpEmail');
+    const otpCodeInput    = document.getElementById('otpCode');
+    const sendOtpBtn      = document.getElementById('sendOtpBtn');
+    const verifyOtpBtn    = document.getElementById('verifyOtpBtn');
+    const resendOtpBtn    = document.getElementById('resendOtpBtn');
+    const otpEmailHint    = document.getElementById('otpEmailHint');
+    const otpCodeHint     = document.getElementById('otpCodeHint');
+    const otpVerifiedBadge = document.getElementById('otpVerifiedBadge');
+    const appForm         = document.getElementById('appForm');
+    const emailField      = document.getElementById('email');
+
+    function generateOtp() {
+      return String(Math.floor(100000 + Math.random() * 900000));
+    }
+
+    function setHint(el, msg, type) {
+      el.textContent = msg;
+      el.className   = 'otp-hint' + (type ? ' ' + type : '');
+    }
+
+    async function sendOtp() {
+      const email = otpEmailInput.value.trim();
+      if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+        setHint(otpEmailHint, 'Please enter a valid email address.', 'error');
+        return;
+      }
+
+      sendOtpBtn.disabled    = true;
+      sendOtpBtn.textContent = 'Sending…';
+      setHint(otpEmailHint, '', '');
+
+      currentOtp = generateOtp();
+      otpExpiry  = Date.now() + OTP_TTL;
+
+      const now     = new Date();
+      const expTime = new Date(otpExpiry).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+          email:    email,
+          passcode: currentOtp,
+          time:     expTime,
+        });
+        setHint(otpEmailHint, `Code sent to ${email}. Check your inbox.`, 'success');
+        otpCodeBlock.style.display = 'block';
+        otpCodeInput.focus();
+      } catch (err) {
+        setHint(otpEmailHint, 'Failed to send code. Please try again.', 'error');
+        currentOtp = null;
+      } finally {
+        sendOtpBtn.disabled    = false;
+        sendOtpBtn.textContent = 'Send Code';
+      }
+    }
+
+    function verifyOtp() {
+      const entered = otpCodeInput.value.trim();
+      if (!entered) { setHint(otpCodeHint, 'Please enter the code.', 'error'); return; }
+      if (Date.now() > otpExpiry) {
+        setHint(otpCodeHint, 'Code expired. Please request a new one.', 'error');
+        currentOtp = null; return;
+      }
+      if (entered !== currentOtp) {
+        setHint(otpCodeHint, 'Incorrect code. Please try again.', 'error');
+        return;
+      }
+
+      // Verified
+      otpStep.style.display          = 'none';
+      otpVerifiedBadge.style.display = 'flex';
+      appForm.style.display          = 'block';
+      emailField.value               = otpEmailInput.value.trim();
+      emailField.readOnly            = true;
+      emailField.style.opacity       = '0.6';
+      appForm.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+
+    sendOtpBtn.addEventListener('click', sendOtp);
+    resendOtpBtn.addEventListener('click', sendOtp);
+    verifyOtpBtn.addEventListener('click', verifyOtp);
+    otpCodeInput.addEventListener('keydown', e => { if (e.key === 'Enter') verifyOtp(); });
+
+    // ── Form submit ──────────────────────────────────────────
     const form       = document.getElementById('appForm');
     const submitBtn  = document.getElementById('submitBtn');
     const successMsg = document.getElementById('successMsg');
@@ -697,8 +902,9 @@
         });
 
         if (res.ok) {
-          form.style.display       = 'none';
-          successMsg.style.display = 'block';
+          form.style.display             = 'none';
+          otpVerifiedBadge.style.display = 'none';
+          successMsg.style.display       = 'block';
           successMsg.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         } else {
           const data = await res.json().catch(() => ({}));
