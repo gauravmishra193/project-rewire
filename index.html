@@ -338,6 +338,7 @@
     }
     .app-form { max-width: 580px; }
     .field { margin-bottom: 24px; }
+    .field label .required { color: var(--accent); }
     .field label {
       display: block;
       font-family: 'Space Grotesk', sans-serif;
@@ -592,45 +593,45 @@
             method="POST">
 
         <div class="field">
-          <label for="name">Full Name</label>
+          <label for="name">Full Name <span class="required">*</span></label>
           <input type="text" id="name" name="name"
                  required autocomplete="name"
                  placeholder="Your full name">
         </div>
 
         <div class="field">
-          <label for="email">Email</label>
+          <label for="email">Email <span class="required">*</span></label>
           <input type="email" id="email" name="email"
                  required autocomplete="email"
                  placeholder="you@example.com">
         </div>
 
         <div class="field">
-          <label for="situation">Current Situation</label>
+          <label for="situation">Current Situation <span class="required">*</span></label>
           <textarea id="situation" name="situation" required
             placeholder="Describe where you are right now: weight, lifestyle, activity level"></textarea>
         </div>
 
         <div class="field">
-          <label for="goal">Your Goal</label>
+          <label for="goal">Your Goal <span class="required">*</span></label>
           <textarea id="goal" name="goal" required
             placeholder="What do you want to achieve and in what timeframe?"></textarea>
         </div>
 
         <div class="field">
-          <label for="tried">What Have You Tried Before?</label>
+          <label for="tried">What Have You Tried Before? <span class="required">*</span></label>
           <textarea id="tried" name="tried" required
             placeholder="Previous programs, approaches, how long you stuck with them..."></textarea>
         </div>
 
         <div class="field">
-          <label for="commitment">Commitment Level</label>
+          <label for="commitment">Commitment Level <span class="required">*</span></label>
           <textarea id="commitment" name="commitment" required
             placeholder="On a scale of 1–10, how serious are you — and why not a 10?"></textarea>
         </div>
 
         <div class="field">
-          <label for="investment">Financial Investment</label>
+          <label for="investment">Financial Investment <span class="required">*</span></label>
           <select id="investment" name="investment" required>
             <option value="" disabled selected>Are you okay investing financially in this process?</option>
             <option value="Yes, definitely">Yes, definitely</option>
