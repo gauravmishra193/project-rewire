@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Project Rewire — Transform. Engineered.</title>
+  <title>Project ReWire — Transform. Engineered.</title>
   <meta name="description" content="A personal fitness transformation program for serious people with demanding lives.">
   <meta property="og:title" content="Project Rewire — Transform. Engineered.">
   <meta property="og:description" content="A personal fitness transformation program for serious people with demanding lives.">
@@ -339,8 +339,38 @@
     }
     .app-form { max-width: 580px; }
     .field { margin-bottom: 24px; }
-    .field label .required { color: var(--accent); }
-    .field label {
+    .field > label .required { color: var(--accent); }
+    .checkbox-group {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 4px;
+    }
+    .checkbox-label {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Inter', sans-serif;
+      font-size: 14px;
+      font-weight: 300;
+      color: var(--text);
+      text-transform: none;
+      letter-spacing: 0;
+      cursor: pointer;
+      padding: 12px 14px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      transition: border-color 0.2s;
+    }
+    .checkbox-label:hover { border-color: var(--accent); }
+    .checkbox-label input[type="checkbox"] {
+      width: 16px;
+      height: 16px;
+      accent-color: var(--accent);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+    .field > label {
       display: block;
       font-family: 'Space Grotesk', sans-serif;
       font-size: 11px;
@@ -350,7 +380,7 @@
       color: var(--muted);
       margin-bottom: 10px;
     }
-    .field input,
+    .field input:not([type="checkbox"]),
     .field textarea,
     .field select {
       display: block;
@@ -380,7 +410,7 @@
       background-position: right 15px center;
       padding-right: 40px;
     }
-    .field input:focus,
+    .field input:not([type="checkbox"]):focus,
     .field textarea:focus,
     .field select:focus { border-color: var(--accent); }
     .field input::placeholder,
@@ -702,27 +732,59 @@
         </div>
 
         <div class="field">
-          <label for="situation">Current Situation <span class="required">*</span></label>
-          <textarea id="situation" name="situation" required
-            placeholder="Describe where you are right now: weight, lifestyle, activity level"></textarea>
+          <label for="goal">Primary Goal <span class="required">*</span></label>
+          <select id="goal" name="goal" required>
+            <option value="" disabled selected>What do you want to achieve?</option>
+            <option value="Lose weight">Lose weight</option>
+            <option value="Build muscle">Build muscle</option>
+            <option value="Improve fitness & endurance">Improve fitness &amp; endurance</option>
+            <option value="Body recomposition (lose fat + gain muscle)">Body recomposition (lose fat + gain muscle)</option>
+            <option value="General health & longevity">General health &amp; longevity</option>
+          </select>
         </div>
 
         <div class="field">
-          <label for="goal">Your Goal <span class="required">*</span></label>
-          <textarea id="goal" name="goal" required
-            placeholder="What do you want to achieve and in what timeframe?"></textarea>
+          <label for="activity">Current Activity Level <span class="required">*</span></label>
+          <select id="activity" name="activity" required>
+            <option value="" disabled selected>How active are you right now?</option>
+            <option value="Sedentary (little to no exercise)">Sedentary (little to no exercise)</option>
+            <option value="Lightly active (1–2x per week)">Lightly active (1–2x per week)</option>
+            <option value="Moderately active (3–4x per week)">Moderately active (3–4x per week)</option>
+            <option value="Very active (5+ times per week)">Very active (5+ times per week)</option>
+          </select>
         </div>
 
         <div class="field">
-          <label for="tried">What Have You Tried Before? <span class="required">*</span></label>
-          <textarea id="tried" name="tried" required
-            placeholder="Previous programs, approaches, how long you stuck with them..."></textarea>
+          <label for="hours">Time Available Per Week <span class="required">*</span></label>
+          <select id="hours" name="hours" required>
+            <option value="" disabled selected>How many hours can you dedicate?</option>
+            <option value="Less than 3 hours">Less than 3 hours</option>
+            <option value="3–5 hours">3–5 hours</option>
+            <option value="5–8 hours">5–8 hours</option>
+            <option value="8+ hours">8+ hours</option>
+          </select>
         </div>
 
         <div class="field">
-          <label for="commitment">Commitment Level <span class="required">*</span></label>
-          <textarea id="commitment" name="commitment" required
-            placeholder="On a scale of 1–10, how serious are you — and why not a 10?"></textarea>
+          <label>Biggest Challenge <span class="required">*</span> <span style="font-size:10px; text-transform:none; letter-spacing:0;">(pick up to 2)</span></label>
+          <div class="checkbox-group">
+            <label class="checkbox-label"><input type="checkbox" name="challenge" value="No time"> No time</label>
+            <label class="checkbox-label"><input type="checkbox" name="challenge" value="No consistency"> No consistency</label>
+            <label class="checkbox-label"><input type="checkbox" name="challenge" value="Don't know what to do"> Don't know what to do</label>
+            <label class="checkbox-label"><input type="checkbox" name="challenge" value="Diet is the problem"> Diet is the problem</label>
+            <label class="checkbox-label"><input type="checkbox" name="challenge" value="Tried before, didn't stick"> Tried before, didn't stick</label>
+            <label class="checkbox-label"><input type="checkbox" name="challenge" value="Injuries or physical limitations"> Injuries or physical limitations</label>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="readiness">Readiness to Start <span class="required">*</span></label>
+          <select id="readiness" name="readiness" required>
+            <option value="" disabled selected>When are you looking to start?</option>
+            <option value="Ready to start immediately">Ready to start immediately</option>
+            <option value="Within the next month">Within the next month</option>
+            <option value="Just exploring for now">Just exploring for now</option>
+          </select>
         </div>
 
         <div class="field">
