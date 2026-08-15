@@ -1,0 +1,63 @@
+// ─── Design tokens ───────────────────────────────────────────
+:root {
+  --bg:      #0A0A0A;
+  --surface: #111111;
+  --border:  #1E1E1E;
+  --accent:  #C8F135;
+  --text:    #F5F5F5;
+  --muted:   #888888;
+  --dim:     #444444;
+}
+
+// ─── Reset ───────────────────────────────────────────────────
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: 'Inter', sans-serif;
+  font-weight: 300;
+  line-height: 1.7;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+h1, h2, h3 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+a { color: inherit; }
+
+// ─── Utility ─────────────────────────────────────────────────
+.inner {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+// ─── Fade-up animation ───────────────────────────────────────
+.fu {
+  opacity: 0;
+  transform: translateY(22px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+.fu.vis { opacity: 1; transform: none; }
+.fu.d1  { transition-delay: 0.08s; }
+.fu.d2  { transition-delay: 0.16s; }
+.fu.d3  { transition-delay: 0.24s; }
+
+// ─── Shared section typography ───────────────────────────────
+.section-eyebrow {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin-bottom: 14px;
+}
+.section-heading {
+  font-size: clamp(28px, 4vw, 50px);
+  color: var(--text);
+  margin-bottom: 56px;
+}

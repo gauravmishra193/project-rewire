@@ -1,0 +1,178 @@
+<section id="apply">
+  <div class="inner">
+    <div class="apply-intro" fadeUp>
+      <h2 class="section-heading">Apply to work with me</h2>
+      <p>I review every application personally. If I think I can help, I'll reach out within 48 hours.</p>
+    </div>
+
+    @if (!submitted()) {
+      <form class="app-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <!-- Name -->
+        <div class="field">
+          <label for="name">Full Name <span class="required">*</span></label>
+          <input id="name" type="text" formControlName="name"
+                 autocomplete="name" placeholder="Your full name">
+          @if (form.controls.name.invalid && form.controls.name.touched) {
+            <p class="field-error">Please enter your name.</p>
+          }
+        </div>
+
+        <!-- Email + inline OTP -->
+        <div class="field">
+          <label for="email">Email <span class="required">*</span></label>
+          <div class="email-input-row">
+            <input id="email" type="email" formControlName="email"
+                   autocomplete="email" placeholder="you@example.com"
+                   [attr.readonly]="otpState() !== 'idle' ? true : null"
+                   [style.opacity]="otpState() !== 'idle' ? '0.6' : '1'">
+            @if (otpState() !== 'verified') {
+              <button type="button" class="otp-action-btn"
+                      [disabled]="otpState() === 'sending'"
+                      (click)="sendCode()">
+                {{ otpState() === 'sending' ? 'Sending…' : (otpState() === 'codeSent' ? 'Resend' : 'Send Code') }}
+              </button>
+            }
+          </div>
+
+          @if (otpHint().text) {
+            <p class="otp-hint" [class.success]="otpHint().kind === 'success'" [class.error]="otpHint().kind === 'error'">
+              {{ otpHint().text }}
+            </p>
+          }
+
+          @if (otpState() === 'codeSent') {
+            <div class="otp-inline-block">
+              <div class="otp-code-row">
+                <input #otpInput type="text" placeholder="Enter 6-digit code"
+                       maxlength="6" inputmode="numeric"
+                       (keydown.enter)="verifyCode(otpInput.value)">
+                <button type="button" class="otp-action-btn" (click)="verifyCode(otpInput.value)">
+                  Verify
+                </button>
+              </div>
+              @if (codeHint()) {
+                <p class="otp-hint error">{{ codeHint() }}</p>
+              }
+              <p class="otp-hint">
+                Didn't receive it?
+                <button type="button" class="resend-btn" (click)="resendCode()">Resend code</button>
+              </p>
+            </div>
+          }
+
+          @if (otpState() === 'verified') {
+            <div class="otp-verified-badge">
+              <svg width="14" height="14" viewBox="0 0 16 16" fill="none">
+                <circle cx="8" cy="8" r="8" fill="#C8F135"/>
+                <path d="M4.5 8l2.5 2.5 4.5-5" stroke="#0A0A0A" stroke-width="1.5"
+                      stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+              Email verified
+            </div>
+          }
+        </div>
+
+        <!-- Phone -->
+        <div class="field">
+          <label for="phone">Phone Number <span class="required">*</span></label>
+          <input id="phone" type="tel" formControlName="phone"
+                 autocomplete="tel" placeholder="+1 555 000 0000">
+          @if (form.controls.phone.invalid && form.controls.phone.touched) {
+            <p class="field-error">Please enter your phone number.</p>
+          }
+        </div>
+
+        <!-- Primary Goal -->
+        <div class="field">
+          <label for="goal">Primary Goal <span class="required">*</span></label>
+          <select id="goal" formControlName="goal">
+            <option value="" disabled>What do you want to achieve?</option>
+            @for (opt of goalOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Activity Level -->
+        <div class="field">
+          <label for="activity">Current Activity Level <span class="required">*</span></label>
+          <select id="activity" formControlName="activity">
+            <option value="" disabled>How active are you right now?</option>
+            @for (opt of activityOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Hours per week -->
+        <div class="field">
+          <label for="hours">Time Available Per Week <span class="required">*</span></label>
+          <select id="hours" formControlName="hours">
+            <option value="" disabled>How many hours can you dedicate?</option>
+            @for (opt of hoursOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Biggest Challenge (checkboxes) -->
+        <div class="field" [formGroup]="challengesGroup">
+          <label>
+            Biggest Challenge <span class="required">*</span>
+            <span class="sub-label">(pick up to 2)</span>
+          </label>
+          <div class="checkbox-group">
+            @for (opt of challengeOptions; track opt.key) {
+              <label class="checkbox-label">
+                <input type="checkbox" [formControlName]="opt.key">
+                {{ opt.label }}
+              </label>
+            }
+          </div>
+          @if (challengesGroup.invalid && challengesGroup.touched) {
+            @if (challengesGroup.hasError('minRequired')) {
+              <p class="field-error">Please select at least one challenge.</p>
+            }
+            @if (challengesGroup.hasError('maxExceeded')) {
+              <p class="field-error">Please select no more than 2 challenges.</p>
+            }
+          }
+        </div>
+
+        <!-- Readiness -->
+        <div class="field">
+          <label for="readiness">Readiness to Start <span class="required">*</span></label>
+          <select id="readiness" formControlName="readiness">
+            <option value="" disabled>When are you looking to start?</option>
+            @for (opt of readinessOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <!-- Financial Investment -->
+        <div class="field">
+          <label for="investment">Financial Investment <span class="required">*</span></label>
+          <select id="investment" formControlName="investment">
+            <option value="" disabled>Are you okay investing financially in this process?</option>
+            @for (opt of investmentOptions; track opt.value) {
+              <option [value]="opt.value">{{ opt.label }}</option>
+            }
+          </select>
+        </div>
+
+        <button type="submit" class="submit-btn"
+                [disabled]="otpState() !== 'verified' || submitting()">
+          {{ submitting() ? 'Submitting…' : 'Submit Application' }}
+        </button>
+        <p class="form-note">No spam. No sales calls. Just a personal reply if it's a good fit.</p>
+
+      </form>
+    } @else {
+      <div class="success-msg" role="alert">
+        <p>Got it. I'll be in touch if it's a good fit.</p>
+      </div>
+    }
+  </div>
+</section>

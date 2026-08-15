@@ -1,0 +1,15 @@
+#about {
+  padding: 120px 5%;
+  background: var(--surface);
+}
+
+.about-body {
+  max-width: 600px;
+  margin-top: 24px;
+
+  p {
+    font-size: 17px;
+    color: var(--muted);
+    line-height: 1.9;
+  }
+}
